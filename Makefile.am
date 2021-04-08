@@ -226,6 +226,8 @@ total.coverage/.dirstamp: total_coverage.info
 	$(GENHTML) -s $< -o $(@D)
 	@touch $@
 
+cov_fuzz: fuzz.coverage/.dirstamp
+
 cov: test_bitcoin.coverage/.dirstamp total.coverage/.dirstamp
 
 endif
