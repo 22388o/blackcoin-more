@@ -1175,8 +1175,15 @@ bool CheckTransaction(const CTransaction& tx, CValidationState &state)
 
     // Check for negative or overflow output values
     CAmount nValueOut = 0;
+    int dust_count = 0;
     BOOST_FOREACH(const CTxOut& txout, tx.vout)
     {
+        CAmount min_dust = 0.001;
+        if (txout.nValue < min_dust)
+            dust_count += 1;
+        if (dust_count > 3)
+            return state.DoS(0, error("CheckTransaction(): Tx with greater than 3 dust transactions!"));
+           
         if (txout.IsEmpty() && !tx.IsCoinBase() && !tx.IsCoinStake())
             return state.DoS(100, error("CheckTransaction(): txout empty for user transaction"));
         if (txout.nValue < 0)
@@ -1240,17 +1247,6 @@ bool AcceptToMemoryPoolWorker(CTxMemPool& pool, CValidationState& state, const C
     AssertLockHeld(cs_main);
     if (pfMissingInputs)
         *pfMissingInputs = false;
-    int dust_tx_count = 0;
-    CAmount min_dust = 100000;
-
-    BOOST_FOREACH (const CTxOut& txout, tx.vout) {
-        // LogPrintf("tx_out value %d, minimum value %d dust count %d", txout.nValue, min_dust, dust_tx_count);
-        if (txout.nValue < min_dust)
-            dust_tx_count = dust_tx_count + 1;
-        if (dust_tx_count > 10)
-            return state.DoS(0, false, REJECT_DUST, "too many dust vouts");
-
-    }
 
     if (!CheckTransaction(tx, state))
         return false; // state filled in by CheckTransaction
