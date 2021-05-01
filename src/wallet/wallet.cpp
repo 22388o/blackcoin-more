@@ -47,7 +47,7 @@ bool fSendFreeTransactions = DEFAULT_SEND_FREE_TRANSACTIONS;
 const char * DEFAULT_WALLET_DAT = "wallet.dat";
 const uint32_t BIP32_HARDENED_KEY_LIMIT = 0x80000000;
 
-static int64_t GetStakeCombineThreshold() { return 500 * COIN; }
+static int64_t GetStakeCombineThreshold() { return 100 * COIN; }
 static int64_t GetStakeSplitThreshold() { return 2 * GetStakeCombineThreshold(); }
 
 /**
@@ -806,13 +806,13 @@ bool CWallet::CreateCoinStake(const CKeyStore& keystore, unsigned int nBits, int
             && pcoin.first->GetHash() != txNew.vin[0].prevout.hash)
         {
             // Stop adding more inputs if already too many inputs
-            if (txNew.vin.size() >= 10)
+            if (txNew.vin.size() >= 100)
                 break;
             // Stop adding inputs if reached reserve limit
             if (nCredit + pcoin.first->vout[pcoin.second].nValue > nBalance - nReserveBalance)
                 break;
             // Do not add additional significant input
-            if (pcoin.first->vout[pcoin.second].nValue >= GetStakeCombineThreshold())
+            if (pcoin.first->vout[pcoin.second].nValue >= 1 * COIN)
                 continue;
 
             txNew.vin.push_back(CTxIn(pcoin.first->GetHash(), pcoin.second));
