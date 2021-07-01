@@ -10,7 +10,7 @@ $(package)_build_subdir=qtbase
 $(package)_qt_libs=corelib network widgets gui plugins testlib
 $(package)_patches=fix_qt_pkgconfig.patch mac-qmake.conf fix_configure_mac.patch fix_no_printer.patch
 $(package)_patches+= fix_rcc_determinism.patch fix_riscv64_arch.patch xkb-default.patch dont_hardcode_pwd.patch
-$(package)_patches+= freetype_back_compat.patch drop_lrelease_dependency.patch fix_powerpc_libpng.patch
+$(package)_patches+= freetype_back_compat.patch drop_lrelease_dependency.patch
 $(package)_patches+= fix_qpainter_non_determinism.patch
 
 $(package)_qttranslations_file_name=qttranslations-$($(package)_suffix)
@@ -196,7 +196,6 @@ endef
 # CROSS_LIBRARY_PATH. See #15277.
 define $(package)_preprocess_cmds
   patch -p1 -i $($(package)_patch_dir)/freetype_back_compat.patch && \
-  patch -p1 -i $($(package)_patch_dir)/fix_powerpc_libpng.patch && \
   patch -p1 -i $($(package)_patch_dir)/fix_qpainter_non_determinism.patch &&\
   sed -i.old "s|updateqm.commands = \$$$$\$$$$LRELEASE|updateqm.commands = $($(package)_extract_dir)/qttools/bin/lrelease|" qttranslations/translations/translations.pro && \
   patch -p1 -i $($(package)_patch_dir)/drop_lrelease_dependency.patch && \
