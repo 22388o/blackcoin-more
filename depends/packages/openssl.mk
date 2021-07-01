@@ -45,6 +45,7 @@ endef
 
 define $(package)_preprocess_cmds
   sed -i.old 's|"engines", "apps", "test", "util", "tools", "fuzz"|"engines", "tools"|' Configure && \
+  sed -i -e 's|cflags --sysroot.*",|cflags",|' Configurations/15-android.conf
 endef
 
 define $(package)_config_cmds
