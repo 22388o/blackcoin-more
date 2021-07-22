@@ -55,7 +55,7 @@ src/qt/blackmore-qt.includes
 .dirstamp
 .libs
 .*.swp
-*.*~*
+*~
 *.bak
 *.rej
 *.orig
@@ -70,6 +70,7 @@ src/qt/blackmore-qt.includes
 *.log
 *.trs
 *.dmg
+*.iso
 
 *.json.h
 *.raw.h
@@ -115,7 +116,10 @@ releases
 /*.info
 test_bitcoin.coverage/
 total.coverage/
+fuzz.coverage/
 coverage_percent.txt
+/cov_tool_wrapper.sh
+qa-assets/
 
 #build tests
 linux-coverage-build
@@ -123,6 +127,7 @@ linux-build
 win32-build
 test/config.ini
 test/cache/*
+test/.mypy_cache/
 qa/pull-tester/run-bitcoind-for-test.sh
 qa/pull-tester/tests_config.py
 
