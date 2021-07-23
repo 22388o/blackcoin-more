@@ -7,6 +7,8 @@ src/blackmore-cli
 src/blackmore-tx
 src/test/test_blackmore
 src/qt/test/test_blackmore-qt
+src/test/test_bitcoin
+src/qt/test/test_bitcoin-qt
 
 # autoreconf
 Makefile.in
