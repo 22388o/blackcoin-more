@@ -41,10 +41,10 @@ $(package)_config_opts_i686_mingw32=mingw
 $(package)_config_opts_x86_64_freebsd=BSD-x86_64
 endef
 
-#define $(package)_preprocess_cmds
+define $(package)_preprocess_cmds
   sed -i.old 's|"engines", "apps", "test", "util", "tools", "fuzz"|"engines", "tools"|' Configure && \
   sed -i -e 's|cflags --sysroot.*",|cflags",|' Configurations/15-android.conf
-#endef
+endef
 
 define $(package)_config_cmds
   ./Configure $($(package)_config_opts)
