@@ -42,8 +42,8 @@ $(package)_config_opts_x86_64_freebsd=BSD-x86_64
 endef
 
 #define $(package)_preprocess_cmds
-  sed -i.old "/define DATE/d" util/mkbuildinf.pl && \
-  sed -i.old "s|engines apps test|engines|" Makefile.org
+  sed -i.old 's|"engines", "apps", "test", "util", "tools", "fuzz"|"engines", "tools"|' Configure && \
+  sed -i -e 's|cflags --sysroot.*",|cflags",|' Configurations/15-android.conf
 #endef
 
 define $(package)_config_cmds
