@@ -12,13 +12,17 @@ define $(package)_preprocess_cmds
 endef
 
 define $(package)_config_cmds
-  $($(package)_cmake) -DCMAKE_C_FLAGS="$$($(1)_cflags) -Wl,--build-id=none" -DCMAKE_SKIP_RPATH="ON" -DCMAKE_EXE_LINKER_FLAGS="-static" -DCMAKE_FIND_LIBRARY_SUFFIXES=".a" ..
+  cmake -GNinja -DCMAKE_INSTALL_PREFIX:PATH=$(build_prefix) -DCMAKE_C_FLAGS="-Wl,--build-id=none" ..
 endef
 
 define $(package)_build_cmds
-  $(MAKE) -C dmg
+  ninja  dmg
 endef
 
+# Older versions of cmake do not generate install target properly, but we
+# need to support them because that's what is in xenial and we use xenial
+# for reproducible builds. So we just fallback on installing everything.
 define $(package)_stage_cmds
-  $(MAKE) DESTDIR=$($(package)_staging_dir) -C dmg install
+  DESTDIR=$($(package)_staging_dir) ninja dmg/install || \
+      DESTDIR=$($(package)_staging_dir) ninja install
 endef

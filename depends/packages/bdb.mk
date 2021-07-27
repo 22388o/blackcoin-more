@@ -9,7 +9,6 @@ define $(package)_set_vars
 $(package)_config_opts=--disable-shared --enable-cxx --disable-replication --enable-option-checking
 $(package)_config_opts_mingw32=--enable-mingw
 $(package)_config_opts_linux=--with-pic
-$(package)_config_opts_android=--with-pic
 $(package)_config_opts_freebsd=--with-pic
 ifneq ($(build_os),darwin)
 $(package)_config_opts_darwin=--disable-atomicsupport
