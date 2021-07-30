@@ -77,6 +77,8 @@ src/qt/blackmore-qt.includes
 *.json.h
 *.raw.h
 
+*.tmp
+
 # Only ignore unexpected patches
 *.patch
 !depends/patches/**/*.patch
