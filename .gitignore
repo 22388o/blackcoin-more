@@ -146,9 +146,6 @@ contrib/devtools/split-debug.sh
 .vscode/*
 .vs/*
 
-# clang-check
-*.plist
-
 osx_volname
 dist/
 *.background.tiff
