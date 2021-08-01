@@ -118,6 +118,7 @@ $(package)_config_opts_s390x_linux = -platform linux-g++ -xplatform bitcoin-linu
 
 $(package)_config_opts_mingw32 = -no-opengl
 $(package)_config_opts_mingw32 += -no-dbus
+$(package)_config_opts_mingw32 += OPENSSL_LIBS="-lssl -lcrypto -luser32 -lcrypt32 -lws2_32 -lgdi32"
 $(package)_config_opts_mingw32 += -xplatform win32-g++
 $(package)_config_opts_mingw32 += "QMAKE_CFLAGS = '$($(package)_cflags) $($(package)_cppflags)'"
 $(package)_config_opts_mingw32 += "QMAKE_CXXFLAGS = '$($(package)_cflags) $($(package)_cppflags)'"
