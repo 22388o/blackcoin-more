@@ -178,9 +178,9 @@ AC_ARG_WITH([qrencode],
 
 AC_ARG_ENABLE([hardening],
   [AS_HELP_STRING([--disable-hardening],
-  [do not attempt to harden the resulting executables (default is to harden)])],
+  [do not attempt to harden the resulting executables (default is to harden when possible)])],
   [use_hardening=$enableval],
-  [use_hardening=yes])
+  [use_hardening=auto])
 
 AC_ARG_ENABLE([reduce-exports],
   [AS_HELP_STRING([--enable-reduce-exports],
@@ -1227,7 +1227,6 @@ if test x$use_tests = xyes; then
   if test x$HEXDUMP = x; then
     AC_MSG_ERROR(hexdump is required for tests)
   fi
-
 
   if test x$use_boost = xyes; then
 
