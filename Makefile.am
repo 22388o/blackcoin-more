@@ -52,7 +52,9 @@ DIST_SHARE = \
 DIST_DOCS = $(wildcard doc/*.md) $(wildcard doc/release-notes/*.md)
 
 BIN_CHECKS=$(top_srcdir)/contrib/devtools/symbol-check.py \
-           $(top_srcdir)/contrib/devtools/security-check.py
+           $(top_srcdir)/contrib/devtools/security-check.py \
+           $(top_srcdir)/contrib/devtools/utils.py \
+           $(top_srcdir)/contrib/devtools/pixie.py
 
 WINDOWS_PACKAGING = $(top_srcdir)/share/pixmaps/bitcoin.ico \
   $(top_srcdir)/share/pixmaps/nsis-header.bmp \
@@ -131,7 +133,7 @@ $(OSX_BACKGROUND_IMAGE): $(OSX_BACKGROUND_IMAGE).png $(OSX_BACKGROUND_IMAGE)@2x.
 
 deploydir: $(OSX_DMG)
 else !BUILD_DARWIN
-APP_DIST_DIR=$(top_builddir)
+APP_DIST_DIR=$(top_builddir)/dist
 APP_DIST_EXTRAS=$(APP_DIST_DIR)/.background/$(OSX_BACKGROUND_IMAGE) $(APP_DIST_DIR)/.DS_Store $(APP_DIST_DIR)/Applications
 
 $(APP_DIST_DIR)/Applications:
