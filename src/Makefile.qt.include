@@ -200,6 +200,7 @@ BITCOIN_QT_H = \
   qt/intro.h \
   qt/macdockiconhandler.h \
   qt/macnotificationhandler.h \
+  qt/macos_appnap.h \
   qt/modaloverlay.h \
   qt/networkstyle.h \
   qt/notificator.h \
@@ -295,6 +296,7 @@ RES_ICONS = \
 
 BITCOIN_QT_BASE_CPP = \
   qt/bantablemodel.cpp \
+  qt/bitcoin.cpp \
   qt/bitcoinaddressvalidator.cpp \
   qt/bitcoinamountfield.cpp \
   qt/bitcoingui.cpp \

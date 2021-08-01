@@ -776,8 +776,8 @@ if test x$use_hardening != xno; then
   dnl stack-clash-protection does not work properly when building for Windows.
   dnl We use the test case from https://gcc.gnu.org/bugzilla/show_bug.cgi?id=90458
   dnl to determine if it can be enabled.
-  AX_CHECK_COMPILE_FLAG([-fstack-clash-protection],[HARDENED_CXXFLAGS="$HARDENED_CXXFLAGS -fstack-clash-protection"],[],["-O0"],
-    [AC_LANG_SOURCE([[class D {public: unsigned char buf[32768];}; int main() {D d; return 0;}]])])
+  dnl AX_CHECK_COMPILE_FLAG([-fstack-clash-protection],[HARDENED_CXXFLAGS="$HARDENED_CXXFLAGS -fstack-clash-protection"],[],["-O0"],
+  dnl  [AC_LANG_SOURCE([[class D {public: unsigned char buf[32768];}; int main() {D d; return 0;}]])])
 
   dnl When enable_debug is yes, all optimizations are disabled.
   dnl However, FORTIFY_SOURCE requires that there is some level of optimization, otherwise it does nothing and just creates a compiler warning.
@@ -1698,6 +1698,7 @@ case ${OS} in
 esac
 
 echo "Options used to compile and link:"
+echo "  boost process = $ax_cv_boost_process"
 echo "  with wallet     = $enable_wallet"
 echo "  with gui / qt   = $bitcoin_enable_qt"
 if test x$bitcoin_enable_qt != xno; then
