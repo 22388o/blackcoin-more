@@ -19,7 +19,7 @@ void URITests::uriTestsBase58()
     QString scheme =
         QString::fromStdString(Params(CBaseChainParams::MAIN).CashAddrPrefix());
     QUrl uri;
-    uri.setUrl(QString("blackcoin175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W?req-dontexist="));
+    uri.setUrl(QString("blackcoin:175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W?req-dontexist="));
     QVERIFY(!GUIUtil::parseBitcoinURI(scheme, uri, &rv));
 
     uri.setUrl(QString("blackcoin:175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W?dontexist="));
