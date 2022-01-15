@@ -15,6 +15,7 @@
 #include <boost/assign/list_of.hpp>
 
 #include "chainparamsseeds.h"
+#include "arith_uint256.h"
 
 using namespace std;
 
@@ -305,7 +306,7 @@ public:
         consensus.nProtocolV1RetargetingFixedTime = 1395631999;
         consensus.nProtocolV2Time = 1407053625;
         consensus.nProtocolV3Time = 1444028400;
-        consensus.nLastPOWBlock = 1000;
+        consensus.nLastPOWBlock = 10000;
         consensus.nStakeTimestampMask = 0xf;
         consensus.nCoinbaseMaturity = 10;
         consensus.nStakeMinAge = 1 * 60 * 60;
