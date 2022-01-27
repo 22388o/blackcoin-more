@@ -8,6 +8,7 @@
 #include <map>
 #include <string>
 
+#include <boost/function.hpp>
 #include <boost/preprocessor/cat.hpp>
 #include <boost/preprocessor/stringize.hpp>
 
@@ -32,7 +33,7 @@ static void CODE_TO_TIME(benchmark::State& state)
 BENCHMARK(CODE_TO_TIME);
 
  */
-
+ 
 namespace benchmark {
 
     class State {
@@ -52,7 +53,7 @@ namespace benchmark {
         bool KeepRunning();
     };
 
-    typedef std::function<void(State&)> BenchFunction;
+    typedef boost::function<void(State&)> BenchFunction;
 
     class BenchRunner
     {
