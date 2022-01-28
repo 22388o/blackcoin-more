@@ -20,7 +20,6 @@
 #include "pos.h"
 #include "rpc/server.h"
 #include "txmempool.h"
-#include "timedata.h"
 #include "util.h"
 #include "utilstrencodings.h"
 #include "validationinterface.h"
@@ -31,6 +30,7 @@
 #include <stdint.h>
 
 #include <boost/assign/list_of.hpp>
+#include <boost/shared_ptr.hpp>
 
 #include <univalue.h>
 
