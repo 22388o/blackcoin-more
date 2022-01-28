@@ -102,7 +102,9 @@ BITCOIN_CORE_H = \
   coincontrol.h \
   coins.h \
   compat.h \
+  compat/assumptions.h \
   compat/byteswap.h \
+  compat/cpuid.h \
   compat/endian.h \
   compat/sanity.h \
   compressor.h \
@@ -328,6 +330,7 @@ libbitcoin_common_a_SOURCES = \
   amount.cpp \
   arith_uint256.cpp \
   base58.cpp \
+  bloom.cpp \
   cashaddr.cpp \
   cashaddrenc.cpp \
   chainparams.cpp \
