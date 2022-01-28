@@ -155,7 +155,7 @@ AC_DEFUN([BITCOIN_QT_CONFIGURE],[
   ])
 
   if test "x$qt_bin_path" = x; then
-    qt_bin_path="`$PKG_CONFIG --variable=host_bins ${qt_lib_prefix}Core 2>/dev/null`"
+    qt_bin_path="`$PKG_CONFIG --variable=host_bins Qt5Core 2>/dev/null`"
   fi
 
   if test "x$use_hardening" != xno; then
@@ -217,7 +217,7 @@ AC_DEFUN([BITCOIN_QT_CONFIGURE],[
     *darwin*)
      BITCOIN_QT_CHECK([
        MOC_DEFS="${MOC_DEFS} -DQ_OS_MAC"
-       base_frameworks="-framework Foundation -framework AppKit"
+       base_frameworks="-framework Foundation -framework ApplicationServices -framework AppKit"
        AX_CHECK_LINK_FLAG([[$base_frameworks]],[QT_LIBS="$QT_LIBS $base_frameworks"],[AC_MSG_ERROR(could not find base frameworks)])
      ])
     ;;
