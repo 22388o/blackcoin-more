@@ -4,7 +4,6 @@ bench_ecmult
 bench_schnorrsig
 bench_sign
 bench_verify
-bench_schnorr_verify
 bench_recover
 bench_internal
 tests
