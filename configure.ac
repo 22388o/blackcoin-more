@@ -736,12 +736,44 @@ if test x$ac_cv_sys_large_files != x &&
   CPPFLAGS="$CPPFLAGS -D_LARGE_FILES=$ac_cv_sys_large_files"
 fi
 
+AX_CHECK_LINK_FLAG([[-Wl,--large-address-aware]], [LDFLAGS="$LDFLAGS -Wl,--large-address-aware"])
+
+AX_GCC_FUNC_ATTRIBUTE([visibility])
+AX_GCC_FUNC_ATTRIBUTE([dllexport])
+AX_GCC_FUNC_ATTRIBUTE([dllimport])
+
 if test x$use_glibc_compat != xno; then
+
+  #glibc absorbed clock_gettime in 2.17. librt (its previous location) is safe to link
+  #in anyway for back-compat.
+  AC_CHECK_LIB([rt],[clock_gettime],, AC_MSG_ERROR(lib missing))
+
+  #__fdelt_chk's params and return type have changed from long unsigned int to long int.
+  # See which one is present here.
+  AC_MSG_CHECKING(__fdelt_chk type)
+  AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#ifdef _FORTIFY_SOURCE
+                    #undef _FORTIFY_SOURCE
+                  #endif
+                  #define _FORTIFY_SOURCE 2
+                  #include <sys/select.h>
+     extern "C" long unsigned int __fdelt_warn(long unsigned int);]],[[]])],
+    [ fdelt_type="long unsigned int"],
+    [ fdelt_type="long int"])
+  AC_MSG_RESULT($fdelt_type)
+  AC_DEFINE_UNQUOTED(FDELT_TYPE, $fdelt_type,[parameter and return value type for __fdelt_chk])
   AX_CHECK_LINK_FLAG([[-Wl,--wrap=__divmoddi4]], [COMPAT_LDFLAGS="$COMPAT_LDFLAGS -Wl,--wrap=__divmoddi4"])
   AX_CHECK_LINK_FLAG([[-Wl,--wrap=log2f]], [COMPAT_LDFLAGS="$COMPAT_LDFLAGS -Wl,--wrap=log2f"])
+  AX_CHECK_LINK_FLAG([[-Wl,--wrap=glob]], [COMPAT_LDFLAGS="$COMPAT_LDFLAGS -Wl,--wrap=glob"])
+  AX_CHECK_LINK_FLAG([[-Wl,--wrap=log]], [COMPAT_LDFLAGS="$COMPAT_LDFLAGS -Wl,--wrap=log"])
+  AX_CHECK_LINK_FLAG([[-Wl,--wrap=pow]], [COMPAT_LDFLAGS="$COMPAT_LDFLAGS -Wl,--wrap=pow"])
+  AX_CHECK_LINK_FLAG([[-Wl,--wrap=exp]], [COMPAT_LDFLAGS="$COMPAT_LDFLAGS -Wl,--wrap=exp"])
+  AX_CHECK_LINK_FLAG([[-Wl,--wrap=explicit_bzero]], [COMPAT_LDFLAGS="$COMPAT_LDFLAGS -Wl,--wrap=explicit_bzero"])
+  AX_CHECK_LINK_FLAG([[-Wl,--wrap=fcntl]], [COMPAT_LDFLAGS="$COMPAT_LDFLAGS -Wl,--wrap=fcntl"])
   case $host in
-    powerpc64* | ppc64*)
-      AX_CHECK_LINK_FLAG([[-Wl,--no-tls-get-addr-optimize]], [COMPAT_LDFLAGS="$COMPAT_LDFLAGS -Wl,--no-tls-get-addr-optimize"])
+    # Need to add glob64 for 32bit builds
+    i?86-* | arm*)
+      AX_CHECK_LINK_FLAG([[-Wl,--wrap=glob64]], [COMPAT_LDFLAGS="$COMPAT_LDFLAGS -Wl,--wrap=glob64"])
+      AX_CHECK_LINK_FLAG([[-Wl,--wrap=fcntl64]], [COMPAT_LDFLAGS="$COMPAT_LDFLAGS -Wl,--wrap=fcntl64"])
     ;;
   esac
 else
@@ -1133,6 +1165,10 @@ dnl it would break GCC's #include_next.
 AC_DEFUN([SUPPRESS_WARNINGS],
          [$(echo $1 |${SED} -E -e 's/(^| )-I/\1-isystem /g' -e 's;-isystem /usr/include([/ ]|$);-I/usr/include\1;g')])
 
+BITCOIN_QT_INIT
+
+dnl sets $bitcoin_enable_qt, $bitcoin_enable_qt_test, $bitcoin_enable_qt_dbus
+BITCOIN_QT_CONFIGURE([$use_pkgconfig], [qt5])
 if test x$enable_wallet != xno; then
     dnl Check for libdb_cxx only if wallet enabled
     BITCOIN_FIND_BDB62
@@ -1166,11 +1202,6 @@ if test x$have_miniupnpc != xno; then
   ])
 fi
 fi
-
-BITCOIN_QT_INIT
-
-dnl sets $bitcoin_enable_qt, $bitcoin_enable_qt_test, $bitcoin_enable_qt_dbus
-BITCOIN_QT_CONFIGURE([$use_pkgconfig], [qt5])
 
 if test x$build_bitcoin_utils$build_bitcoind$bitcoin_enable_qt$use_tests$use_bench = xnonononono; then
   use_boost=no
