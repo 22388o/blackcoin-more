@@ -7,6 +7,7 @@
 #define __UNIVALUE_H__
 
 #include <stdint.h>
+#include <string.h>
 
 #include <string>
 #include <vector>
