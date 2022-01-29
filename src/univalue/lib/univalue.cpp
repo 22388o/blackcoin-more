@@ -14,65 +14,6 @@
 
 #include "univalue.h"
 
-namespace 
-{
-static bool ParsePrechecks(const std::string& str)
-{
-    if (str.empty()) // No empty string allowed
-        return false;
-    if (str.size() >= 1 && (json_isspace(str[0]) || json_isspace(str[str.size()-1]))) // No padding allowed
-        return false;
-    if (str.size() != strlen(str.c_str())) // No embedded NUL characters allowed
-        return false;
-    return true;
-}
-
-bool ParseInt32(const std::string& str, int32_t *out)
-{
-    if (!ParsePrechecks(str))
-        return false;
-    char *endp = NULL;
-    errno = 0; // strtol will not set errno if valid
-    long int n = strtol(str.c_str(), &endp, 10);
-    if(out) *out = (int32_t)n;
-    // Note that strtol returns a *long int*, so even if strtol doesn't report a over/underflow
-    // we still have to check that the returned value is within the range of an *int32_t*. On 64-bit
-    // platforms the size of these types may be different.
-    return endp && *endp == 0 && !errno &&
-        n >= std::numeric_limits<int32_t>::min() &&
-        n <= std::numeric_limits<int32_t>::max();
-}
-
-bool ParseInt64(const std::string& str, int64_t *out)
-{
-    if (!ParsePrechecks(str))
-        return false;
-    char *endp = NULL;
-    errno = 0; // strtoll will not set errno if valid
-    long long int n = strtoll(str.c_str(), &endp, 10);
-    if(out) *out = (int64_t)n;
-    // Note that strtoll returns a *long long int*, so even if strtol doesn't report a over/underflow
-    // we still have to check that the returned value is within the range of an *int64_t*.
-    return endp && *endp == 0 && !errno &&
-        n >= std::numeric_limits<int64_t>::min() &&
-        n <= std::numeric_limits<int64_t>::max();
-}
-
-bool ParseDouble(const std::string& str, double *out)
-{
-    if (!ParsePrechecks(str))
-        return false;
-    if (str.size() >= 2 && str[0] == '0' && str[1] == 'x') // No hexadecimal floats allowed
-        return false;
-    std::istringstream text(str);
-    text.imbue(std::locale::classic());
-    double result;
-    text >> result;
-    if(out) *out = result;
-    return text.eof() && !text.fail();
-}
-}
-
 using namespace std;
 
 const UniValue NullUniValue;
@@ -100,15 +41,15 @@ bool UniValue::setBool(bool val_)
     return true;
 }
 
-static bool validNumStr(const string& s)
+static bool validNumStr(const std::string& s)
 {
-    string tokenVal;
+    std::string tokenVal;
     unsigned int consumed;
     enum jtokentype tt = getJsonToken(tokenVal, consumed, s.c_str());
     return (tt == JTOK_NUMBER);
 }
 
-bool UniValue::setNumStr(const string& val_)
+bool UniValue::setNumStr(const std::string& val_)
 {
     if (!validNumStr(val_))
         return false;
@@ -119,39 +60,36 @@ bool UniValue::setNumStr(const string& val_)
     return true;
 }
 
-bool UniValue::setInt(uint64_t val)
+bool UniValue::setInt(uint64_t val_)
 {
-    string s;
-    ostringstream oss;
+    std::ostringstream oss;
 
-    oss << val;
+    oss << val_;
 
     return setNumStr(oss.str());
 }
 
-bool UniValue::setInt(int64_t val)
+bool UniValue::setInt(int64_t val_)
 {
-    string s;
-    ostringstream oss;
+    std::ostringstream oss;
 
-    oss << val;
+    oss << val_;
 
     return setNumStr(oss.str());
 }
 
-bool UniValue::setFloat(double val)
+bool UniValue::setFloat(double val_)
 {
-    string s;
-    ostringstream oss;
+    std::ostringstream oss;
 
-    oss << std::setprecision(16) << val;
+    oss << std::setprecision(16) << val_;
 
     bool ret = setNumStr(oss.str());
     typ = VNUM;
     return ret;
 }
 
-bool UniValue::setStr(const string& val_)
+bool UniValue::setStr(const std::string& val_)
 {
     clear();
     typ = VSTR;
@@ -173,12 +111,12 @@ bool UniValue::setObject()
     return true;
 }
 
-bool UniValue::push_back(const UniValue& val)
+bool UniValue::push_back(const UniValue& val_)
 {
     if (typ != VARR)
         return false;
 
-    values.push_back(val);
+    values.push_back(val_);
     return true;
 }
 
@@ -192,7 +130,13 @@ bool UniValue::push_backV(const std::vector<UniValue>& vec)
     return true;
 }
 
-bool UniValue::pushKV(const std::string& key, const UniValue& val)
+void UniValue::__pushKV(const std::string& key, const UniValue& val_)
+{
+    keys.push_back(key);
+    values.push_back(val_);
+}
+
+bool UniValue::pushKV(const std::string& key, const UniValue& val_)
 {
     if (typ != VOBJ)
         return false;
@@ -287,77 +231,5 @@ const UniValue& find_value(const UniValue& obj, const std::string& name)
             return obj.values.at(i);
 
     return NullUniValue;
-}
-
-std::vector<std::string> UniValue::getKeys() const
-{
-    if (typ != VOBJ)
-        throw std::runtime_error("JSON value is not an object as expected");
-    return keys;
-}
-
-std::vector<UniValue> UniValue::getValues() const
-{
-    if (typ != VOBJ && typ != VARR)
-        throw std::runtime_error("JSON value is not an object or array as expected");
-    return values;
-}
-
-bool UniValue::get_bool() const
-{
-    if (typ != VBOOL)
-        throw std::runtime_error("JSON value is not a boolean as expected");
-    return getBool();
-}
-
-std::string UniValue::get_str() const
-{
-    if (typ != VSTR)
-        throw std::runtime_error("JSON value is not a string as expected");
-    return getValStr();
-}
-
-int UniValue::get_int() const
-{
-    if (typ != VNUM)
-        throw std::runtime_error("JSON value is not an integer as expected");
-    int32_t retval;
-    if (!ParseInt32(getValStr(), &retval))
-        throw std::runtime_error("JSON integer out of range");
-    return retval;
-}
-
-int64_t UniValue::get_int64() const
-{
-    if (typ != VNUM)
-        throw std::runtime_error("JSON value is not an integer as expected");
-    int64_t retval;
-    if (!ParseInt64(getValStr(), &retval))
-        throw std::runtime_error("JSON integer out of range");
-    return retval;
-}
-
-double UniValue::get_real() const
-{
-    if (typ != VNUM)
-        throw std::runtime_error("JSON value is not a number as expected");
-    double retval;
-    if (!ParseDouble(getValStr(), &retval))
-        throw std::runtime_error("JSON double out of range");
-    return retval;
-}
-
-const UniValue& UniValue::get_obj() const
-{
-    if (typ != VOBJ)
-        throw std::runtime_error("JSON value is not an object as expected");
-    return *this;
-}
-
-const UniValue& UniValue::get_array() const
-{
-    if (typ != VARR)
-        throw std::runtime_error("JSON value is not an array as expected");
-    return *this;
 }
 
