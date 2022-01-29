@@ -1,5 +1,5 @@
 ---
-name: "blackcoin-more-win-signer"
+name: "bitcoin-win-signer"
 distro: "ubuntu"
 suites:
 - "focal"

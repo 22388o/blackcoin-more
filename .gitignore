@@ -1,12 +1,16 @@
 *.tar.gz
 
 *.exe
-src/blackmore
-src/blackmored
-src/blackmore-cli
-src/blackmore-tx
-src/test/test_blackmore
-src/qt/test/test_blackmore-qt
+*.pdb
+src/bitcoin
+src/bitcoind
+src/bitcoin-cli
+src/bitcoin-gui
+src/bitcoin-node
+src/bitcoin-tx
+src/bitcoin-util
+src/bitcoin-wallet
+src/test/fuzz/fuzz
 src/test/test_bitcoin
 src/qt/test/test_bitcoin-qt
 
@@ -34,7 +38,6 @@ configure
 libtool
 src/config/bitcoin-config.h
 src/config/bitcoin-config.h.in
-src/config/bitcoin-config.h.in~
 src/config/stamp-h1
 src/obj
 share/setup.nsi
@@ -48,11 +51,11 @@ src/qt/forms/ui_*.h
 
 src/qt/test/moc*.cpp
 
-src/qt/blackmore-qt.config
-src/qt/blackmore-qt.creator
-src/qt/blackmore-qt.creator.user
-src/qt/blackmore-qt.files
-src/qt/blackmore-qt.includes
+src/qt/bitcoin-qt.config
+src/qt/bitcoin-qt.creator
+src/qt/bitcoin-qt.creator.user
+src/qt/bitcoin-qt.files
+src/qt/bitcoin-qt.includes
 
 .deps
 .dirstamp
@@ -78,8 +81,6 @@ src/qt/blackmore-qt.includes
 *.json.h
 *.raw.h
 
-*.tmp
-
 # Only ignore unexpected patches
 *.patch
 !depends/patches/**/*.patch
@@ -92,9 +93,8 @@ src/qt/blackmore-qt.includes
 *.qm
 Makefile
 !depends/Makefile
-src/qt/blackmore-qt
-Blackmore-Qt.app
-Blackcoin-More.app
+src/qt/bitcoin-qt
+Bitcoin-Qt.app
 background.tiff*
 
 # Qt Creator
@@ -102,8 +102,7 @@ Makefile.am.user
 
 # Unit-tests
 Makefile.test
-blackmore-qt_test
-src/test/buildenv.py
+bitcoin-qt_test
 
 # Resources cpp
 qrc_*.cpp
@@ -133,8 +132,6 @@ win32-build
 test/config.ini
 test/cache/*
 test/.mypy_cache/
-qa/pull-tester/run-bitcoind-for-test.sh
-qa/pull-tester/tests_config.py
 
 !src/leveldb*/Makefile
 
@@ -143,10 +140,46 @@ qa/pull-tester/tests_config.py
 libbitcoinconsensus.pc
 contrib/devtools/split-debug.sh
 
-#Visual Studio
-.vscode/*
-.vs/*
+# Output from running db4 installation
+db4/
+
+# clang-check
+*.plist
 
 osx_volname
 dist/
 *.background.tiff
+
+/guix-build-*
+
+# Blackcoin More
+src/blackmore
+src/blackmored
+src/blackmore-cli
+src/blackmore-tx
+src/test/test_blackmore
+src/qt/blackmore-qt_test
+src/qt/test/test_blackmore-qt
+qa/pull-tester/run-bitcoind-for-test.sh
+qa/pull-tester/tests_config.py
+
+
+#Visual Studio
+.vscode/*
+.vs/*
+
+# Output from running db6 installation
+db6/
+
+# Unit-tests
+
+src/test/buildenv.py
+
+# Compilation and Qt preprocessor part
+src/qt/blackmore-qt
+Blackmore-Qt.app
+src/qt/blackmore-qt.config
+src/qt/blackmore-qt.creator
+src/qt/blackmore-qt.creator.user
+src/qt/blackmore-qt.files
+src/qt/blackmore-qt.includes
