@@ -4,17 +4,11 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include <stdint.h>
-#include <errno.h>
 #include <iomanip>
-#include <limits>
 #include <sstream>
-#include <stdexcept>
 #include <stdlib.h>
-#include <string.h>
 
 #include "univalue.h"
-
-using namespace std;
 
 const UniValue NullUniValue;
 
@@ -45,7 +39,7 @@ static bool validNumStr(const std::string& s)
 {
     std::string tokenVal;
     unsigned int consumed;
-    enum jtokentype tt = getJsonToken(tokenVal, consumed, s.c_str());
+    enum jtokentype tt = getJsonToken(tokenVal, consumed, s.data(), s.data() + s.size());
     return (tt == JTOK_NUMBER);
 }
 
@@ -141,8 +135,11 @@ bool UniValue::pushKV(const std::string& key, const UniValue& val_)
     if (typ != VOBJ)
         return false;
 
-    keys.push_back(key);
-    values.push_back(val);
+    size_t idx;
+    if (findKey(key, idx))
+        values[idx] = val_;
+    else
+        __pushKV(key, val_);
     return true;
 }
 
@@ -151,33 +148,43 @@ bool UniValue::pushKVs(const UniValue& obj)
     if (typ != VOBJ || obj.typ != VOBJ)
         return false;
 
-    for (unsigned int i = 0; i < obj.keys.size(); i++) {
-        keys.push_back(obj.keys[i]);
-        values.push_back(obj.values.at(i));
-    }
+    for (size_t i = 0; i < obj.keys.size(); i++)
+        __pushKV(obj.keys[i], obj.values.at(i));
 
     return true;
 }
 
-int UniValue::findKey(const std::string& key) const
+void UniValue::getObjMap(std::map<std::string,UniValue>& kv) const
 {
-    for (unsigned int i = 0; i < keys.size(); i++) {
-        if (keys[i] == key)
-            return (int) i;
-    }
+    if (typ != VOBJ)
+        return;
 
-    return -1;
+    kv.clear();
+    for (size_t i = 0; i < keys.size(); i++)
+        kv[keys[i]] = values[i];
 }
 
-bool UniValue::checkObject(const std::map<std::string,UniValue::VType>& t)
+bool UniValue::findKey(const std::string& key, size_t& retIdx) const
+{
+    for (size_t i = 0; i < keys.size(); i++) {
+        if (keys[i] == key) {
+            retIdx = i;
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool UniValue::checkObject(const std::map<std::string,UniValue::VType>& t) const
 {
     if (typ != VOBJ)
         return false;
 
     for (std::map<std::string,UniValue::VType>::const_iterator it = t.begin();
-         it != t.end(); it++) {
-        int idx = findKey(it->first);
-        if (idx < 0)
+         it != t.end(); ++it) {
+        size_t idx = 0;
+        if (!findKey(it->first, idx))
             return false;
 
         if (values.at(idx).getType() != it->second)
@@ -192,14 +199,14 @@ const UniValue& UniValue::operator[](const std::string& key) const
     if (typ != VOBJ)
         return NullUniValue;
 
-    int index = findKey(key);
-    if (index < 0)
+    size_t index = 0;
+    if (!findKey(key, index))
         return NullUniValue;
 
     return values.at(index);
 }
 
-const UniValue& UniValue::operator[](unsigned int index) const
+const UniValue& UniValue::operator[](size_t index) const
 {
     if (typ != VOBJ && typ != VARR)
         return NullUniValue;

@@ -68,10 +68,11 @@ public:
     size_t size() const { return values.size(); }
 
     bool getBool() const { return isTrue(); }
-    bool checkObject(const std::map<std::string,UniValue::VType>& memberTypes);
+    void getObjMap(std::map<std::string,UniValue>& kv) const;
+    bool checkObject(const std::map<std::string,UniValue::VType>& memberTypes) const;
     const UniValue& operator[](const std::string& key) const;
-    const UniValue& operator[](unsigned int index) const;
-    bool exists(const std::string& key) const { return (findKey(key) >= 0); }
+    const UniValue& operator[](size_t index) const;
+    bool exists(const std::string& key) const { size_t i; return findKey(key, i); }
 
     bool isNull() const { return (typ == VNULL); }
     bool isTrue() const { return (typ == VBOOL) && (val == "1"); }
@@ -144,9 +145,10 @@ public:
     std::string write(unsigned int prettyIndent = 0,
                       unsigned int indentLevel = 0) const;
 
-    bool read(const char *raw);
+    bool read(const char *raw, size_t len);
+    bool read(const char *raw) { return read(raw, strlen(raw)); }
     bool read(const std::string& rawStr) {
-        return read(rawStr.c_str());
+        return read(rawStr.data(), rawStr.size());
     }
 
 private:
@@ -155,7 +157,7 @@ private:
     std::vector<std::string> keys;
     std::vector<UniValue> values;
 
-    int findKey(const std::string& key) const;
+    bool findKey(const std::string& key, size_t& retIdx) const;
     void writeArray(unsigned int prettyIndent, unsigned int indentLevel, std::string& s) const;
     void writeObject(unsigned int prettyIndent, unsigned int indentLevel, std::string& s) const;
 
@@ -175,11 +177,11 @@ public:
     enum VType type() const { return getType(); }
     bool push_back(std::pair<std::string,UniValue> pear) {
         return pushKV(pear.first, pear.second);
-    }
+    } //ToDo Blackcoin needs this
     friend const UniValue& find_value( const UniValue& obj, const std::string& name);
 };
 
-//
+// ToDo Blackcoin needs this
 // The following were added for compatibility with json_spirit.
 // Most duplicate other methods, and should be removed.
 //
@@ -260,7 +262,7 @@ enum jtokentype {
 };
 
 extern enum jtokentype getJsonToken(std::string& tokenVal,
-                                    unsigned int& consumed, const char *raw);
+                                    unsigned int& consumed, const char *raw, const char *end);
 extern const char *uvTypeName(UniValue::VType t);
 
 static inline bool jsonTokenIsValue(enum jtokentype jtt)
