@@ -276,8 +276,7 @@ endif
 clean-docs:
 	rm -rf doc/doxygen
 
-
-clean-local:
+clean-local: clean-docs
 	rm -rf coverage_percent.txt test_bitcoin.coverage/ total.coverage/ qa/tmp/ cache/ $(OSX_APP)
 	rm -rf test/functional/__pycache__ test/functional/test_framework/__pycache__ test/cache share/rpcauth/__pycache__ qa/pull-tester/__pycache__
 	rm -rf osx_volname dist/ dpi36.background.tiff dpi72.background.tiff
