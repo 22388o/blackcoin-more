@@ -1488,6 +1488,14 @@ AC_MSG_CHECKING([whether to build blackmored])
 AM_CONDITIONAL([BUILD_BITCOIND], [test x$build_bitcoind = xyes])
 AC_MSG_RESULT($build_bitcoind)
 
+AC_MSG_CHECKING([whether to build blackmore-cli])
+AM_CONDITIONAL([BUILD_BITCOIN_CLI], [test x$build_bitcoin_cli = xyes])
+AC_MSG_RESULT($build_bitcoin_cli)
+
+AC_MSG_CHECKING([whether to build blackmore-tx])
+AM_CONDITIONAL([BUILD_BITCOIN_TX], [test x$build_bitcoin_tx = xyes])
+AC_MSG_RESULT($build_bitcoin_tx)
+
 AC_MSG_CHECKING([whether to build utils (blackmore-cli blackmore-tx)])
 AM_CONDITIONAL([BUILD_BITCOIN_UTILS], [test x$build_bitcoin_utils = xyes])
 AC_MSG_RESULT($build_bitcoin_utils)
