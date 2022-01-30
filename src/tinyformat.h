@@ -514,7 +514,7 @@ class FormatArg
         { }
 
         template<typename T>
-        FormatArg(const T& value)
+        explicit FormatArg(const T& value)
             : m_value(static_cast<const void*>(&value)),
             m_formatImpl(&formatImpl<T>),
             m_toIntImpl(&toIntImpl<T>)
