@@ -210,7 +210,7 @@ bool CScript::IsPayToScriptHash() const
             (*this)[22] == OP_EQUAL);
 }
 
-bool CScript::IsPayToPublicKey() const
+bool CScript::IsPayToPublicKeyHash() const
 {
     // Extra-fast test for pay-to-pubkey CScripts:
     return (this->size() == 35 &&
