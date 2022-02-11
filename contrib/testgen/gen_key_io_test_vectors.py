@@ -13,9 +13,8 @@ Usage:
 # Released under MIT License
 import os
 from itertools import islice
-from base58 import b58encode_chk, b58decode_chk, b58chars
+from base58 import b58encode_chk, b58decode_chk, b58chars, convertbits, CHARSET, Encoding
 import random
-from segwit_addr import bech32_encode, decode_segwit_address, convertbits, CHARSET, Encoding
 
 # key types
 PUBKEY_ADDRESS = 48
@@ -114,28 +113,6 @@ bech32_ng_templates = [
   ('rltc', 16, 20, Encoding.BECH32,  False, False, False),
 ]
 
-def is_valid(v):
-    '''Check vector v for validity'''
-    if len(set(v) - set(b58chars)) > 0:
-        return is_valid_bech32(v)
-    result = b58decode_chk(v)
-    if result is None:
-        return is_valid_bech32(v)
-    for template in templates:
-        prefix = bytearray(template[0])
-        suffix = bytearray(template[2])
-        if result.startswith(prefix) and result.endswith(suffix):
-            if (len(result) - len(prefix) - len(suffix)) == template[1]:
-                return True
-    return is_valid_bech32(v)
-
-def is_valid_bech32(v):
-    '''Check vector v for bech32 validity'''
-    for hrp in ['ltc', 'tltc', 'rltc']:
-        if decode_segwit_address(hrp, v) != (None, None):
-            return True
-    return False
-
 def gen_valid_base58_vector(template):
     '''Generate valid base58 vector'''
     prefix = bytearray(template[0])
@@ -145,28 +122,6 @@ def gen_valid_base58_vector(template):
     dst_suffix = bytearray(template[5])
     rv = b58encode_chk(prefix + payload + suffix)
     return rv, dst_prefix + payload + dst_suffix
-
-def gen_valid_bech32_vector(template):
-    '''Generate valid bech32 vector'''
-    hrp = template[0]
-    witver = template[1]
-    witprog = bytearray(os.urandom(template[2]))
-    encoding = template[4]
-    dst_prefix = bytearray(template[5])
-    rv = bech32_encode(encoding, hrp, [witver] + convertbits(witprog, 8, 5))
-    return rv, dst_prefix + witprog
-
-def gen_valid_vectors():
-    '''Generate valid test vectors'''
-    glist = [gen_valid_base58_vector, gen_valid_bech32_vector]
-    tlist = [templates, bech32_templates]
-    while True:
-        for template, valid_vector_generator in [(t, g) for g, l in zip(glist, tlist) for t in l]:
-            rv, payload = valid_vector_generator(template)
-            assert is_valid(rv)
-            metadata = {x: y for x, y in zip(metadata_keys,template[3]) if y is not None}
-            hexrepr = payload.hex()
-            yield (rv, hexrepr, metadata)
 
 def gen_invalid_base58_vector(template):
     '''Generate possibly invalid vector'''
@@ -213,17 +168,6 @@ def gen_invalid_bech32_vector(template):
     witprog = bytearray(os.urandom(template[2]))
     encoding = template[3]
 
-    if no_data:
-        rv = bech32_encode(encoding, hrp, [])
-    else:
-        data = [witver] + convertbits(witprog, 8, 5)
-        if template[4] and not no_data:
-            if template[2] % 5 in {2, 4}:
-                data[-1] |= 1
-            else:
-                data.append(0)
-        rv = bech32_encode(encoding, hrp, data)
-
     if template[5]:
         i = len(rv) - random.randrange(1, 7)
         rv = rv[:i] + random.choice(CHARSET.replace(rv[i], '')) + rv[i + 1:]
@@ -239,32 +183,6 @@ def gen_invalid_bech32_vector(template):
 def randbool(p = 0.5):
     '''Return True with P(p)'''
     return random.random() < p
-
-def gen_invalid_vectors():
-    '''Generate invalid test vectors'''
-    # start with some manual edge-cases
-    yield "",
-    yield "x",
-    glist = [gen_invalid_base58_vector, gen_invalid_bech32_vector]
-    tlist = [templates, bech32_ng_templates]
-    while True:
-        for template, invalid_vector_generator in [(t, g) for g, l in zip(glist, tlist) for t in l]:
-            val = invalid_vector_generator(template)
-            if not is_valid(val):
-                yield val,
-
-if __name__ == '__main__':
-    import sys
-    import json
-    iters = {'valid':gen_valid_vectors, 'invalid':gen_invalid_vectors}
-    try:
-        uiter = iters[sys.argv[1]]
-    except IndexError:
-        uiter = gen_valid_vectors
-    try:
-        count = int(sys.argv[2])
-    except IndexError:
-        count = 0
 
     data = list(islice(uiter(), count))
     json.dump(data, sys.stdout, sort_keys=True, indent=4)
