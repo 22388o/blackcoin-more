@@ -4,7 +4,7 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #if defined(HAVE_CONFIG_H)
-#include "config/bitcoin-config.h"
+#include <config/bitcoin-config.h>
 #endif
 
 #include "init.h"
@@ -30,7 +30,6 @@
 #include "script/standard.h"
 #include "script/sigcache.h"
 #include "scheduler.h"
-#include "timedata.h"
 #include "txdb.h"
 #include "txmempool.h"
 #include "torcontrol.h"
