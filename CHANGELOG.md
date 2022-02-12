@@ -1,4 +1,12 @@
 # Changelog
+## v2.13.2.9 (2021-02-14)
+- update leveldb
+- add crc32
+- update crypto
+- update univalue
+- update depends
+- add stakereport from cli/rpc
+- update complete buildsystem
 ## v2.13.2.8 (2021-02-24)
 - Immediately ban clients operating on forked chains older than nMaxReorganizationDepth
 - Fixed IsDust() policy to allow atomic swaps
