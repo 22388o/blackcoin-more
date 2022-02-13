@@ -1,17 +1,16 @@
 # Changelog
 ## v2.13.2.9 (2021-02-14)
-- update leveldb
-- add crc32
-- update crypto
-- update univalue
-- update depends
-- add stakereport from cli/rpc
-- update complete buildsystem
+- update leveldb, which should resolve the "missing utxo" staking issue.
+- update crypto and add crc32 for ARM64.
+- update univalue to v1.0.3.
+- update dependencies and build system from BTC core 0.20+.
+- add "getstakereport" RPC call.
+- cleanup code.
 ## v2.13.2.8 (2021-02-24)
-- Immediately ban clients operating on forked chains older than nMaxReorganizationDepth
-- Fixed IsDust() policy to allow atomic swaps
-- Updated fixed seeds for mainnet and testnet
-- Updated dependencies for MacOS
+- Immediately ban clients operating on forked chains older than nMaxReorganizationDepth.
+- Fixed IsDust() policy to allow atomic swaps.
+- Updated fixed seeds for mainnet and testnet.
+- Updated dependencies for MacOS.
 
 ## v2.13.2.7 (2020-11-24)
 - Dust mitigation in mempool (by JJ12880 from Radium Core) 
