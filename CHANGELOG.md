@@ -4,8 +4,12 @@
 - update crypto and add crc32 for ARM64.
 - update univalue to v1.0.3.
 - update dependencies and build system from BTC core 0.20+.
+- update to qt5.12.11
+- update to openssl 1.1.1m
 - add "getstakereport" RPC call.
-- cleanup code.
+- add --use-sse2 to enable SSE2.
+- cleanup code (headers, names, etc)
+
 ## v2.13.2.8 (2021-02-24)
 - Immediately ban clients operating on forked chains older than nMaxReorganizationDepth.
 - Fixed IsDust() policy to allow atomic swaps.
