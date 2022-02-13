@@ -122,7 +122,7 @@ public:
         consensus.nStakeMinAge = 8 * 60 * 60; // 8 hours
 
         // The best chain should have at least this much work.
-        consensus.nMinimumChainWork = uint256S("0x0000000000000000000000000000000000000000000002ef7a6c83f19a157178");
+        consensus.nMinimumChainWork = uint256S("0x0000000000000000000000000000000000000000000003333cc03d7375f97554");
 
         /**
          * The message start string is designed to be unlikely to occur in normal data.
@@ -144,7 +144,7 @@ public:
         vSeeds.push_back(CDNSSeedData("dnsseed.blackcoin.nl", "dnsseed.blackcoin.nl")); //hosted at dns.blackcoin.nl
         vSeeds.push_back(CDNSSeedData("dnsseed2.blackcoin.nl", "dnsseed2.blackcoin.nl")); //hosted at vps.blackcoin.nl
         vSeeds.push_back(CDNSSeedData("ghost.blackcoin.nl", "ghost.blackcoin.nl")); // Michel van Kessel static node
-        vSeeds.push_back(CDNSSeedData("node.blackcoin.io ", "node.blackcoin.io"));  // payBLK static node
+        vSeeds.push_back(CDNSSeedData("node.blackcoin.io ", "node.blackcoin.nl"));  // payBLK static node
 
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,25);
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1,85);
@@ -221,7 +221,7 @@ public:
         nDefaultPort = 25714;
 
         // The best chain should have at least this much work.
-        consensus.nMinimumChainWork = uint256S("0x000000000000000000000000000000000000000000000028afadd1049e589cf2");
+        consensus.nMinimumChainWork = uint256S("0x00000000000000000000000000000000000000000000002ded16d314fb2cac1c");
 
         /*
         consensus.vDeployments[Consensus::DEPLOYMENT_CSV].bit = 0;
